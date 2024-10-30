@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Birthday Card Generator</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffe66d;
+            --text-color: #2c3e50;
+            --background-color: #f7f9fc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        #introPage {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #fff6e5, #ffd5e5);
+        }
+
+        #generatorPage {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .input-container {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        input {
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .card {
+            display: none;
+            width: 400px;
+            height: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template1 {
+            background: linear-gradient(45deg, #ffefba, #ffffff);
+            border: 2px solid #ffd700;
+        }
+
+        .template2 {
+            background: linear-gradient(45deg, #e0c3fc, #8ec5fc);
+            color: white;
+        }
+
+        .template3 {
+            background: linear-gradient(45deg, #fa709a, #fee140);
+            color: white;
+        }
+
+        .confetti {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        #cardTitle {
+            font-size: 2rem;
+            margin: 3rem 0 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        #cardQuote {
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            font-style: italic;
+        }
+
+        #cardSender {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.3rem;
+        }
+
+        .credit {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                width: 90%;
+                height: 500px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="introPage">
+        <h1 class="title">Birthday Card Generator</h1>
+        <p class="subtitle">Create beautiful, personalized birthday cards in seconds</p>
+        <button class="btn" onclick="showGenerator()">Create Your Card</button>
+        <p class="credit">Crafted with ❤️ by Amogh Kadadi</p>
+    </div>
+
+    <div id="generatorPage">
+        <h1 class="title">Design Your Card</h1>
+        <div class="input-container">
+            <input type="text" id="senderName" placeholder="Your Name" required>
+            <input type="text" id="receiverName" placeholder="Birthday Person's Name" required>
+            <input type="number" id="age" placeholder="Age" required>
+            <button class="btn" onclick="generateCard()">Generate Card</button>
+        </div>
+
+        <div class="card" id="birthdayCard">
+            <div class="confetti">🎉 🎂 🎈</div>
+            <h2 id="cardTitle"></h2>
+            <p id="cardAge"></p>
+            <p id="cardQuote"></p>
+            <p id="cardSender"></p>
+        </div>
+
+        <button class="btn" id="downloadBtn" onclick="downloadCard()" style="display:none;">Download Card</button>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        const quotes = [
+            "May your day be as bright as your smile and as lovely as you.",
+            "Another year of being amazing! Happy Birthday!",
+            "Wishing you a day filled with happiness and a year filled with joy.",
+            "May all your dreams and wishes come true in this coming year.",
+            "Here's to another year of laughing until it hurts, dealing with stupid people, and keeping each other moderately sane.",
+            "Hope your special day brings you all that your heart desires!",
+            "Here's to another year of experience, wisdom, and adventure ahead!",
+            "Another year older, wiser, and more awesome!",
+            "Here's to celebrating you and all the joy you bring to others!",
+            "May this year bring you endless opportunities and beautiful moments."
+        ];
+
+        function showGenerator() {
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('generatorPage').style.display = 'block';
+        }
+
+        function generateCard() {
+            const senderName = document.getElementById('senderName').value;
+            const receiverName = document.getElementById('receiverName').value;
+            const age = document.getElementById('age').value;
+
+            if (!senderName || !receiverName || !age) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const templates = ['template1', 'template2', 'template3'];
+            const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+
+            const card = document.getElementById('birthdayCard');
+            card.className = `card ${randomTemplate}`;
+            
+            document.getElementById('cardTitle').innerText = `Happy Birthday, ${receiverName}!`;
+            document.getElementById('cardAge').innerText = `🎈 Celebrating ${age} Wonderful Years! 🎈`;
+            document.getElementById('cardQuote').innerText = randomQuote;
+            document.getElementById('cardSender').innerText = `With love, ${senderName}`;
+
+            card.style.display = 'block';
+            document.getElementById('downloadBtn').style.display = 'block';
+        }
+
+        function downloadCard() {
+            html2canvas(document.getElementById('birthdayCard')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'birthday_card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
